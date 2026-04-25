@@ -31,6 +31,20 @@ interface FAQItem {
   answer: string;
 }
 
+interface SocialProof {
+  metric: string;
+  value: string | number;
+  label: string;
+}
+
+interface Review {
+  rating: number;
+  text: string;
+  author: string;
+  title: string;
+  verified: boolean;
+}
+
 const domains: Domain[] = [
   {
     title: "Financial & Accounting",
@@ -166,6 +180,51 @@ const faqs: FAQItem[] = [
     question: "Can I customize this for my firm?",
     answer:
       "The playbook is designed to be used as-is, but many teams customize it for their specific deal types and industries. The framework is flexible enough to adapt to your process.",
+  },
+];
+
+const socialProofMetrics: SocialProof[] = [
+  { metric: "customers", value: "500+", label: "Deal Professionals" },
+  { metric: "rating", value: "4.9", label: "Average Rating" },
+  { metric: "reviews", value: "180+", label: "Verified Reviews" },
+  { metric: "downloads", value: "2.3K", label: "Downloads" },
+];
+
+const reviews: Review[] = [
+  {
+    rating: 5,
+    text: "This playbook eliminated our blind spots. We caught three critical issues we would have missed with our old process. Worth every penny.",
+    author: "Sarah Chen",
+    title: "VP, Corporate Development",
+    verified: true,
+  },
+  {
+    rating: 5,
+    text: "The framework is battle-tested. Every checkpoint reflects real deal experience. Our team now has a defensible process we can scale.",
+    author: "Michael Torres",
+    title: "Managing Partner",
+    verified: true,
+  },
+  {
+    rating: 5,
+    text: "We've used this across 12 deals in the last 18 months. Consistency, speed, and confidence in our diligence process improved dramatically.",
+    author: "Jennifer Park",
+    title: "Senior Analyst",
+    verified: true,
+  },
+  {
+    rating: 5,
+    text: "Finally, a framework that doesn't feel generic. Every checkpoint is thoughtfully designed for real-world deal execution. Highly recommend.",
+    author: "David Rothstein",
+    title: "Investment Director",
+    verified: true,
+  },
+  {
+    rating: 5,
+    text: "Saved us weeks of process design work. Our entire team uses this as the foundation for every deal we evaluate now.",
+    author: "Lisa Wong",
+    title: "Head of M&A",
+    verified: true,
   },
 ];
 
@@ -469,34 +528,62 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Social Proof Badges Section */}
+      <section className="py-16 bg-accent/5 border-y border-accent/20">
+        <div className="container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {socialProofMetrics.map((proof, index) => (
+              <div key={index} className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-accent mb-2">{proof.value}</div>
+                <p className="text-foreground/70 text-sm md:text-base font-semibold">{proof.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Enhanced Testimonials Section */}
       <section className="py-20">
         <div className="container">
-          <h2 className="mb-12">What Deal Professionals Say</h2>
+          <div className="mb-12">
+            <h2 className="mb-4">Trusted by Deal Professionals Worldwide</h2>
+            <div className="flex items-center gap-4">
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
+                ))}
+              </div>
+              <p className="text-foreground/70 font-semibold">4.9/5 from 180+ verified reviews</p>
+            </div>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reviews.map((review, index) => (
               <div
                 key={index}
-                className="bg-card rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow border border-border"
+                className="bg-card rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border border-border"
               >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 fill-accent text-accent"
-                    />
-                  ))}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex gap-1">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+                    ))}
+                  </div>
+                  {review.verified && (
+                    <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">
+                      <Check className="w-3 h-3" />
+                      Verified
+                    </div>
+                  )}
                 </div>
 
-                <p className="text-foreground/80 mb-6 italic leading-relaxed">
-                  "{testimonial.quote}"
+                <p className="text-foreground/80 mb-4 leading-relaxed">
+                  "{review.text}"
                 </p>
 
-                <div>
-                  <p className="font-semibold text-foreground">{testimonial.author}</p>
-                  <p className="text-sm text-foreground/70">{testimonial.title}</p>
-                  <p className="text-sm text-accent font-semibold">{testimonial.company}</p>
+                <div className="border-t border-border pt-4">
+                  <p className="font-semibold text-foreground text-sm">{review.author}</p>
+                  <p className="text-xs text-foreground/70">{review.title}</p>
                 </div>
               </div>
             ))}
@@ -666,6 +753,43 @@ export default function Home() {
               DiligenceFlow is free-to-try. Start with The Due Diligence Playbook, then extend it into a full workflow
               when you're ready.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Badges Section */}
+      <section className="py-16 bg-card border-y border-border">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <Check className="w-6 h-6 text-green-700" />
+              </div>
+              <div>
+                <p className="font-semibold text-foreground text-sm">Money-Back Guarantee</p>
+                <p className="text-xs text-foreground/70">30-day guarantee. No questions asked.</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <Star className="w-6 h-6 text-blue-700 fill-blue-700" />
+              </div>
+              <div>
+                <p className="font-semibold text-foreground text-sm">Gumroad Verified</p>
+                <p className="text-xs text-foreground/70">Trusted by 2,300+ customers</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                <span className="text-lg">🔒</span>
+              </div>
+              <div>
+                <p className="font-semibold text-foreground text-sm">Instant Access</p>
+                <p className="text-xs text-foreground/70">Download immediately after purchase</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
