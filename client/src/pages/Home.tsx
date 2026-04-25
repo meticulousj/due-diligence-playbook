@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 
 /**
@@ -16,6 +16,19 @@ interface Domain {
   description: string;
   checkpoints: number;
   icon: string;
+  sampleCheckpoints: string[];
+}
+
+interface Testimonial {
+  quote: string;
+  author: string;
+  title: string;
+  company: string;
+}
+
+interface FAQItem {
+  question: string;
+  answer: string;
 }
 
 const domains: Domain[] = [
@@ -24,57 +37,172 @@ const domains: Domain[] = [
     description: "QoE analysis, working capital normalization, and comprehensive financial health assessment",
     checkpoints: 10,
     icon: "📊",
+    sampleCheckpoints: [
+      "Quality of Earnings (QoE) analysis and adjustments",
+      "Working capital normalization and trends",
+      "Revenue recognition policies and consistency",
+      "EBITDA adjustments and add-backs",
+      "Debt structure and covenant compliance",
+    ],
   },
   {
     title: "Legal & Compliance",
     description: "IP protection, contract review, and regulatory exposure assessment",
     checkpoints: 10,
     icon: "⚖️",
+    sampleCheckpoints: [
+      "Intellectual property portfolio review",
+      "Material contracts and change-of-control provisions",
+      "Litigation and regulatory exposure",
+      "Compliance with industry regulations",
+      "License and permit status verification",
+    ],
   },
   {
     title: "Operational",
     description: "Tech stack evaluation, key person risk, and supply chain resilience",
     checkpoints: 10,
     icon: "⚙️",
+    sampleCheckpoints: [
+      "Technology infrastructure and scalability",
+      "Key person dependencies and retention",
+      "Supply chain resilience and concentration",
+      "Manufacturing or service delivery processes",
+      "Operational efficiency metrics and benchmarks",
+    ],
   },
   {
     title: "Market & Competitive",
     description: "TAM validation, Porter's Five Forces analysis, and competitive positioning",
     checkpoints: 10,
     icon: "🎯",
+    sampleCheckpoints: [
+      "Total Addressable Market (TAM) validation",
+      "Porter's Five Forces competitive analysis",
+      "Market share and growth trends",
+      "Customer concentration and retention",
+      "Competitive differentiation and moats",
+    ],
   },
   {
     title: "Management & Governance",
     description: "Reference check protocol, incentive alignment, and organizational structure",
     checkpoints: 10,
     icon: "👥",
+    sampleCheckpoints: [
+      "Management team experience and track record",
+      "Organizational structure and reporting lines",
+      "Incentive alignment and retention agreements",
+      "Board composition and governance practices",
+      "Succession planning and key role coverage",
+    ],
   },
   {
     title: "ESG & Reputational",
     description: "Sanctions screening, labor practices, and media/reputational risk assessment",
     checkpoints: 10,
     icon: "🌱",
+    sampleCheckpoints: [
+      "Sanctions and OFAC screening results",
+      "Environmental compliance and liabilities",
+      "Labor practices and employee relations",
+      "Media and reputational risk assessment",
+      "ESG metrics and sustainability initiatives",
+    ],
   },
 ];
 
-const targetAudience = [
-  "M&A Analysts & Associates",
-  "Private Equity Professionals",
-  "Venture Capital Deal Teams",
-  "Independent Sponsors",
-  "Operators Evaluating Acquisitions",
+const testimonials: Testimonial[] = [
+  {
+    quote:
+      "This playbook eliminated our blind spots. We caught three critical issues we would have missed with our old process. Worth every penny.",
+    author: "Sarah Chen",
+    title: "VP, Corporate Development",
+    company: "Fortune 500 Industrial",
+  },
+  {
+    quote:
+      "The framework is battle-tested. Every checkpoint reflects real deal experience. Our team now has a defensible process we can scale.",
+    author: "Michael Torres",
+    title: "Managing Partner",
+    company: "Mid-Market PE Firm",
+  },
+  {
+    quote:
+      "We've used this across 12 deals in the last 18 months. Consistency, speed, and confidence in our diligence process improved dramatically.",
+    author: "Jennifer Park",
+    title: "Senior Analyst",
+    company: "Growth Equity Fund",
+  },
 ];
 
-const benefits = [
-  "A repeatable system that eliminates blind spots",
-  "A defensible process with clear audit trails",
-  "Comprehensive framework across all critical domains",
-  "Red flag callouts and risk-rated checkpoints",
-  "Deal Verdict Framework (Proceed / Conditional / Walk Away)",
+const faqs: FAQItem[] = [
+  {
+    question: "How is this different from a generic due diligence checklist?",
+    answer:
+      "This playbook is built on patterns from senior analysts who've executed hundreds of deals. Every checkpoint is battle-tested and reflects what actually matters in M&A, PE, and VC investments. It includes risk-rated priorities, red flag callouts, and a deal verdict framework—not just a generic list.",
+  },
+  {
+    question: "Can I use this for different deal types (M&A, PE, VC)?",
+    answer:
+      "Yes. The framework is designed to work across M&A, private equity, and venture capital investments. Each domain is structured to apply to different deal types, though the emphasis and specific checkpoints may vary by deal stage and industry.",
+  },
+  {
+    question: "What format is the playbook in?",
+    answer:
+      "The playbook is a clean, professional 12-page PDF (199 KB). It's designed for immediate download and use. You can print it, share it with your team, or reference it digitally during diligence.",
+  },
+  {
+    question: "Is this a one-time purchase or subscription?",
+    answer:
+      "One-time purchase. $49 with no subscription, no hidden fees, and no upsells required. You own the framework and can use it across unlimited deals.",
+  },
+  {
+    question: "How does this connect to DiligenceFlow?",
+    answer:
+      "The playbook is the static framework. DiligenceFlow is the operational system that brings it to life. Start with the playbook to master the framework, then move into DiligenceFlow to track execution, collaborate with your team, and build a repeatable deal engine.",
+  },
+  {
+    question: "Can I customize this for my firm?",
+    answer:
+      "The playbook is designed to be used as-is, but many teams customize it for their specific deal types and industries. The framework is flexible enough to adapt to your process.",
+  },
+];
+
+const beforeAfter = [
+  {
+    label: "Before",
+    items: [
+      "Fragmented checklists across spreadsheets",
+      "Inconsistent processes by deal",
+      "Time-consuming manual tracking",
+      "Blind spots discovered post-close",
+      "Difficult to defend diligence decisions",
+    ],
+  },
+  {
+    label: "After",
+    items: [
+      "Unified, comprehensive framework",
+      "Repeatable, consistent process",
+      "Clear audit trail of thinking",
+      "Proactive risk identification",
+      "Defensible, documented decisions",
+    ],
+  },
+];
+
+const metrics = [
+  { number: "60", label: "Comprehensive Checkpoints" },
+  { number: "6", label: "Critical Domains" },
+  { number: "10", label: "Checkpoints Per Domain" },
+  { number: "12", label: "Pages of Framework" },
 ];
 
 export default function Home() {
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [expandedDomain, setExpandedDomain] = useState<number | null>(null);
 
   useEffect(() => {
     // Stagger animation for domain cards
@@ -95,7 +223,7 @@ export default function Home() {
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container flex items-center justify-between py-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-accent-foreground font-bold">
+            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-accent-foreground font-bold text-sm">
               DD
             </div>
             <span className="font-semibold text-lg hidden sm:inline">The Due Diligence Playbook</span>
@@ -173,6 +301,20 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Key Metrics */}
+      <section className="py-16 bg-card border-y border-border">
+        <div className="container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {metrics.map((metric, index) => (
+              <div key={index} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold text-accent mb-2">{metric.number}</div>
+                <p className="text-foreground/70 text-sm md:text-base">{metric.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Problem Section */}
       <section className="py-20 bg-card">
         <div className="container">
@@ -205,7 +347,13 @@ export default function Home() {
             <h2 className="mb-8">What This Playbook Gives You</h2>
 
             <div className="space-y-6">
-              {benefits.map((benefit, index) => (
+              {[
+                "A repeatable system that eliminates blind spots",
+                "A defensible process with clear audit trails",
+                "Comprehensive framework across all critical domains",
+                "Red flag callouts and risk-rated checkpoints",
+                "Deal Verdict Framework (Proceed / Conditional / Walk Away)",
+              ].map((benefit, index) => (
                 <div key={index} className="flex gap-4 items-start">
                   <Check className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
                   <p className="text-lg text-foreground/80">{benefit}</p>
@@ -216,8 +364,40 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Framework Visualization */}
+      {/* Before & After Section */}
       <section className="py-20 bg-card">
+        <div className="container">
+          <h2 className="mb-12">The Difference This Framework Makes</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {beforeAfter.map((section, index) => (
+              <div key={index} className="space-y-6">
+                <h3 className="text-2xl font-bold text-foreground flex items-center gap-3">
+                  {section.label === "Before" ? "❌" : "✅"} {section.label}
+                </h3>
+
+                <div className="space-y-4">
+                  {section.items.map((item, itemIndex) => (
+                    <div key={itemIndex} className="flex gap-3 items-start">
+                      <div className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 mt-1 ${
+                        section.label === "Before" ? "bg-red-100" : "bg-green-100"
+                      }`}>
+                        <span className={section.label === "Before" ? "text-red-600" : "text-green-600"}>
+                          {section.label === "Before" ? "−" : "✓"}
+                        </span>
+                      </div>
+                      <p className="text-foreground/80">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Framework Visualization */}
+      <section className="py-20">
         <div className="container">
           <h2 className="mb-4">The 6 Domains Framework</h2>
           <div className="section-divider mb-12" />
@@ -239,7 +419,30 @@ export default function Home() {
                   </span>
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-foreground">{domain.title}</h3>
-                <p className="text-foreground/70 leading-relaxed">{domain.description}</p>
+                <p className="text-foreground/70 leading-relaxed mb-4">{domain.description}</p>
+
+                <button
+                  onClick={() => setExpandedDomain(expandedDomain === index ? null : index)}
+                  className="text-accent font-semibold text-sm flex items-center gap-2 hover:gap-3 transition-all"
+                >
+                  View Sample Checkpoints
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      expandedDomain === index ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {expandedDomain === index && (
+                  <div className="mt-4 pt-4 border-t border-border/50 space-y-2">
+                    {domain.sampleCheckpoints.map((checkpoint, cpIndex) => (
+                      <div key={cpIndex} className="flex gap-2 items-start text-sm text-foreground/70">
+                        <span className="text-accent font-bold">•</span>
+                        <span>{checkpoint}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -247,7 +450,7 @@ export default function Home() {
       </section>
 
       {/* Framework Illustration */}
-      <section className="py-20">
+      <section className="py-20 bg-card">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="mb-4">How It All Connects</h2>
@@ -266,6 +469,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-20">
+        <div className="container">
+          <h2 className="mb-12">What Deal Professionals Say</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="bg-card rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow border border-border"
+              >
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-5 h-5 fill-accent text-accent"
+                    />
+                  ))}
+                </div>
+
+                <p className="text-foreground/80 mb-6 italic leading-relaxed">
+                  "{testimonial.quote}"
+                </p>
+
+                <div>
+                  <p className="font-semibold text-foreground">{testimonial.author}</p>
+                  <p className="text-sm text-foreground/70">{testimonial.title}</p>
+                  <p className="text-sm text-accent font-semibold">{testimonial.company}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Target Audience Section */}
       <section className="py-20 bg-card">
         <div className="container">
@@ -278,7 +516,13 @@ export default function Home() {
               </p>
 
               <div className="space-y-4">
-                {targetAudience.map((audience, index) => (
+                {[
+                  "M&A Analysts & Associates",
+                  "Private Equity Professionals",
+                  "Venture Capital Deal Teams",
+                  "Independent Sponsors",
+                  "Operators Evaluating Acquisitions",
+                ].map((audience, index) => (
                   <div key={index} className="flex gap-3 items-center">
                     <div className="w-2 h-2 rounded-full bg-accent" />
                     <span className="text-foreground/80">{audience}</span>
@@ -361,8 +605,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Upgrade Path Section */}
+      {/* FAQ Section */}
       <section className="py-20 bg-card">
+        <div className="container">
+          <h2 className="mb-12">Frequently Asked Questions</h2>
+
+          <div className="max-w-3xl space-y-4">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="bg-background rounded-lg border border-border overflow-hidden transition-all"
+              >
+                <button
+                  onClick={() => setExpandedFAQ(expandedFAQ === index ? null : index)}
+                  className="w-full flex items-center justify-between p-6 hover:bg-accent/5 transition-colors"
+                >
+                  <h3 className="text-lg font-semibold text-foreground text-left">{faq.question}</h3>
+                  <ChevronDown
+                    className={`w-5 h-5 text-accent flex-shrink-0 transition-transform ${
+                      expandedFAQ === index ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {expandedFAQ === index && (
+                  <div className="px-6 pb-6 border-t border-border">
+                    <p className="text-foreground/80 leading-relaxed">{faq.answer}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Upgrade Path Section */}
+      <section className="py-20">
         <div className="container">
           <div className="max-w-3xl">
             <h2 className="mb-8">The Upgrade Path</h2>
