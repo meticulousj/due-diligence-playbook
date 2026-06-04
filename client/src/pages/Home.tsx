@@ -1,6 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, ChevronDown, Star } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Star, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 /**
  * Modern Institutional Design System
@@ -262,6 +265,10 @@ export default function Home() {
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const [expandedDomain, setExpandedDomain] = useState<number | null>(null);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
 
   useEffect(() => {
     // Stagger animation for domain cards
@@ -275,6 +282,44 @@ export default function Home() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!emailSubmitted) {
+        setShowEmailModal(true);
+      }
+    }, 15000);
+
+    return () => clearTimeout(timer);
+  }, [emailSubmitted]);
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !email.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      const emails = JSON.parse(localStorage.getItem("capturedEmails") || "[]");
+      emails.push({ email, timestamp: new Date().toISOString() });
+      localStorage.setItem("capturedEmails", JSON.stringify(emails));
+      
+      setEmailSubmitted(true);
+      setShowEmailModal(false);
+      toast.success("Check your email for the Quick-Start Checklist!");
+      setEmail("");
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -876,6 +921,76 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Email Capture Modal */}
+      <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="w-5 h-5 text-accent" />
+              Get Your Free Quick-Start Checklist
+            </DialogTitle>
+            <DialogDescription>
+              Join 500+ deal professionals. Get instant access to a condensed version of the framework.
+            </DialogDescription>
+          </DialogHeader>
+
+          {!emailSubmitted ? (
+            <form onSubmit={handleEmailSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-semibold text-foreground">
+                  Email Address
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting}
+                  className="bg-background"
+                />
+              </div>
+
+              <div className="bg-accent/5 border border-accent/20 rounded-lg p-4">
+                <p className="text-sm text-foreground/80">
+                  <strong>What you'll get:</strong>
+                </p>
+                <ul className="text-sm text-foreground/70 mt-2 space-y-1 ml-4">
+                  <li>✓ 10-point financial checklist</li>
+                  <li>✓ Legal & compliance quick-scan</li>
+                  <li>✓ Red flag indicators</li>
+                  <li>✓ Deal verdict framework</li>
+                </ul>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+              >
+                {isSubmitting ? "Sending..." : "Get Free Checklist"}
+              </Button>
+
+              <p className="text-xs text-foreground/60 text-center">
+                We respect your privacy. Unsubscribe anytime.
+              </p>
+            </form>
+          ) : (
+            <div className="text-center space-y-4 py-4">
+              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+                <Check className="w-6 h-6 text-green-700" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-2">Check Your Email!</h3>
+                <p className="text-sm text-foreground/70">
+                  Your Quick-Start Checklist is on its way to {email}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
