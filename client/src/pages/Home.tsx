@@ -269,6 +269,8 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [showExitIntent, setShowExitIntent] = useState(false);
+  const [exitIntentShown, setExitIntentShown] = useState(false);
 
   useEffect(() => {
     // Stagger animation for domain cards
@@ -292,6 +294,20 @@ export default function Home() {
 
     return () => clearTimeout(timer);
   }, [emailSubmitted]);
+
+  // Exit-intent modal: triggers when user moves mouse toward top of page
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      // Only trigger if user hasn't already seen it and email modal isn't shown
+      if (!exitIntentShown && !showEmailModal && e.clientY <= 0) {
+        setShowExitIntent(true);
+        setExitIntentShown(true);
+      }
+    };
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => document.removeEventListener("mouseleave", handleMouseLeave);
+  }, [exitIntentShown, showEmailModal]);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -999,6 +1015,58 @@ export default function Home() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Exit-Intent Discount Modal */}
+      <Dialog open={showExitIntent} onOpenChange={setShowExitIntent}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-2xl">🎁</span>
+            </div>
+            <DialogTitle className="text-xl font-semibold">Wait! Get 20% Off Today</DialogTitle>
+            <DialogDescription className="text-sm text-foreground/70">
+              Don't miss out on this exclusive offer
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="bg-accent/10 border-2 border-accent rounded-lg p-6 text-center">
+              <p className="text-sm text-foreground/70 mb-2">Use code at checkout:</p>
+              <div className="bg-background border-2 border-accent rounded-lg p-3 font-mono font-bold text-lg text-accent">
+                DILIGENCE20
+              </div>
+              <p className="text-xs text-foreground/60 mt-2">20% off your purchase</p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-foreground">Why professionals choose The Due Diligence Playbook:</p>
+              <ul className="text-sm text-foreground/70 space-y-1">
+                <li>✓ 60-point framework used by 500+ deal professionals</li>
+                <li>✓ Battle-tested across M&A, VC, and PE deals</li>
+                <li>✓ Instant access to all 12 pages + resources</li>
+                <li>✓ 30-day money-back guarantee</li>
+              </ul>
+            </div>
+
+            <a
+              href="https://geniusdownloads.gumroad.com/l/TheDueDiligence"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold py-3 px-4 rounded-lg text-center transition-colors"
+              onClick={() => setShowExitIntent(false)}
+            >
+              Claim 20% Discount Now
+            </a>
+
+            <button
+              onClick={() => setShowExitIntent(false)}
+              className="w-full text-sm text-foreground/60 hover:text-foreground transition-colors py-2"
+            >
+              I'll pass for now
+            </button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
