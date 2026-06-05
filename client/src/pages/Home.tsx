@@ -1,4 +1,4 @@
-import { ArrowRight, Check, ChevronDown, Star, Mail, X } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Star, Mail, X, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -986,6 +986,16 @@ export default function Home() {
                 <p className="text-sm text-foreground/70">
                   Your Quick-Start Checklist is on its way to {email}
                 </p>
+              </div>
+              <div className="pt-2">
+                <a
+                  href="/manus-storage/due-diligence-checklist_cef42c25.pdf"
+                  download="Due-Diligence-Quick-Start-Checklist.pdf"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-accent/80 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Now
+                </a>
               </div>
             </div>
           )}
