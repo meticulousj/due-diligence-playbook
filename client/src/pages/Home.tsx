@@ -55,6 +55,20 @@ interface ChatMessage {
   timestamp: Date;
 }
 
+interface CaseStudy {
+  title: string;
+  client: string;
+  industry: string;
+  dealType: string;
+  challenge: string;
+  solution: string;
+  results: {
+    label: string;
+    value: string;
+  }[];
+  keyFindings: string[];
+}
+
 const domains: Domain[] = [
   {
     title: "Financial & Accounting",
@@ -269,6 +283,49 @@ const metrics = [
 ];
 
 export default function Home() {
+const caseStudies: CaseStudy[] = [
+  {
+    title: "Hidden Liabilities Prevented $2.3M Write-Down",
+    client: "Midwest Manufacturing Acquisition",
+    industry: "Industrial Manufacturing",
+    dealType: "PE-backed Acquisition",
+    challenge: "A mid-market PE firm was evaluating a $45M acquisition of a regional manufacturing company. Using their standard checklist, they had cleared the financial metrics and were ready to close within 60 days.",
+    solution: "The Due Diligence Playbook's ESG & Reputational domain flagged environmental compliance gaps. The Supply Chain checkpoint revealed undisclosed environmental liabilities at a supplier facility that the target company relied on for 40% of its raw materials.",
+    results: [
+      { label: "Liabilities Identified", value: "$2.3M" },
+      { label: "Deal Renegotiation", value: "-$2.1M purchase price" },
+      { label: "Time Saved", value: "6 months of disputes" },
+      { label: "Risk Avoided", value: "Regulatory fines" },
+    ],
+    keyFindings: [
+      "Environmental audit revealed contamination requiring $2.3M remediation",
+      "Supplier dependency created supply chain vulnerability",
+      "Renegotiated deal price down by $2.1M based on findings",
+      "Avoided 18-month regulatory investigation post-close",
+    ],
+  },
+  {
+    title: "Key Person Risk Identified Before $80M Acquisition",
+    client: "Technology Services Roll-Up",
+    industry: "Business Services / SaaS",
+    dealType: "Strategic Acquisition",
+    challenge: "A strategic buyer was acquiring an $80M B2B SaaS company. Financial metrics looked strong with 35% YoY growth and healthy margins. Management appeared stable on paper, but the buyer needed to understand true organizational resilience.",
+    solution: "The Management & Governance domain's Reference Check Protocol uncovered that 65% of the company's enterprise relationships were personally managed by the CEO. Only one other executive had client relationship authority.",
+    results: [
+      { label: "Key Person Risk", value: "65% of revenue at risk" },
+      { label: "Retention Agreements", value: "3-year golden handcuffs" },
+      { label: "Earnout Adjustment", value: "+$8M contingent" },
+      { label: "Organizational Restructuring", value: "$1.2M investment" },
+    ],
+    keyFindings: [
+      "CEO managed 65% of top 20 customer relationships personally",
+      "Only 1 backup executive with client authority—single point of failure",
+      "Implemented 3-year retention agreement with $8M earnout",
+      "Restructured sales team to distribute relationship risk",
+    ],
+  },
+];
+
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const [expandedDomain, setExpandedDomain] = useState<number | null>(null);
@@ -703,6 +760,77 @@ export default function Home() {
                 <div className="border-t border-border pt-4">
                   <p className="font-semibold text-foreground text-sm">{review.author}</p>
                   <p className="text-xs text-foreground/70">{review.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Case Studies Section */}
+      <section className="py-20 bg-background">
+        <div className="container">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4">Real-World Impact: How The Framework Saves Money</h2>
+            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+              See how deal professionals caught critical issues and saved millions using The Due Diligence Playbook framework.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {caseStudies.map((study, index) => (
+              <div
+                key={index}
+                className="bg-card rounded-lg p-8 shadow-sm hover:shadow-lg transition-shadow border border-border overflow-hidden group"
+              >
+                {/* Case Study Header */}
+                <div className="mb-6 pb-6 border-b border-border">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-foreground mb-2">{study.title}</h3>
+                      <p className="text-sm text-accent font-semibold mb-2">{study.dealType}</p>
+                    </div>
+                    <div className="text-3xl opacity-20">💼</div>
+                  </div>
+                  <div className="flex gap-4 text-xs text-foreground/70">
+                    <span><strong>Client:</strong> {study.client}</span>
+                    <span><strong>Industry:</strong> {study.industry}</span>
+                  </div>
+                </div>
+
+                {/* Challenge & Solution */}
+                <div className="space-y-6 mb-8">
+                  <div>
+                    <h4 className="font-bold text-foreground mb-2 text-sm uppercase tracking-wide">The Challenge</h4>
+                    <p className="text-foreground/80 text-sm leading-relaxed">{study.challenge}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-foreground mb-2 text-sm uppercase tracking-wide text-accent">How The Playbook Helped</h4>
+                    <p className="text-foreground/80 text-sm leading-relaxed">{study.solution}</p>
+                  </div>
+                </div>
+
+                {/* Results Grid */}
+                <div className="grid grid-cols-2 gap-4 mb-8 p-4 bg-accent/5 rounded-lg border border-accent/10">
+                  {study.results.map((result, idx) => (
+                    <div key={idx} className="text-center">
+                      <p className="text-lg font-bold text-accent mb-1">{result.value}</p>
+                      <p className="text-xs text-foreground/70">{result.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Key Findings */}
+                <div>
+                  <h4 className="font-bold text-foreground mb-3 text-sm uppercase tracking-wide">Key Findings</h4>
+                  <ul className="space-y-2">
+                    {study.keyFindings.map((finding, idx) => (
+                      <li key={idx} className="flex gap-3 text-sm text-foreground/80">
+                        <span className="text-accent font-bold flex-shrink-0">✓</span>
+                        <span>{finding}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             ))}
