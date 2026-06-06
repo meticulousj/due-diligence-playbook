@@ -1,4 +1,4 @@
-import { ArrowRight, Check, ChevronDown, Star, Mail, X, Download } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Star, Mail, X, Download, MessageCircle, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -46,6 +46,13 @@ interface Review {
   author: string;
   title: string;
   verified: boolean;
+}
+
+interface ChatMessage {
+  id: string;
+  text: string;
+  sender: 'user' | 'agent';
+  timestamp: Date;
 }
 
 const domains: Domain[] = [
@@ -271,6 +278,18 @@ export default function Home() {
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [showExitIntent, setShowExitIntent] = useState(false);
   const [exitIntentShown, setExitIntentShown] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      id: '1',
+      text: "Hi! 👋 Have questions about The Due Diligence Playbook? I'm here to help!",
+      sender: 'agent',
+      timestamp: new Date(),
+    },
+  ]);
+  const [chatInput, setChatInput] = useState("");
+  const [isChatSubmitting, setIsChatSubmitting] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(1);
 
   useEffect(() => {
     // Stagger animation for domain cards
@@ -308,6 +327,45 @@ export default function Home() {
     document.addEventListener("mouseleave", handleMouseLeave);
     return () => document.removeEventListener("mouseleave", handleMouseLeave);
   }, [exitIntentShown, showEmailModal]);
+
+  const handleChatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      text: chatInput,
+      sender: 'user',
+      timestamp: new Date(),
+    };
+    setChatMessages((prev) => [...prev, userMessage]);
+    setChatInput("");
+    setIsChatSubmitting(true);
+
+    setTimeout(() => {
+      const agentResponses = [
+        "Great question! The playbook covers all 6 critical domains for M&A, PE, and VC deals.",
+        "You can use this framework across M&A, private equity, and venture capital investments.",
+        "Yes! It's a one-time purchase with instant access. No subscriptions or upsells.",
+        "The playbook is 12 pages of battle-tested framework with 60 checkpoints across 6 domains.",
+        "Absolutely! We offer a 30-day money-back guarantee if you're not satisfied.",
+      ];
+      const randomResponse = agentResponses[Math.floor(Math.random() * agentResponses.length)];
+      const agentMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        text: randomResponse,
+        sender: 'agent',
+        timestamp: new Date(),
+      };
+      setChatMessages((prev) => [...prev, agentMessage]);
+      setIsChatSubmitting(false);
+    }, 800);
+  };
+
+  const handleChatOpen = () => {
+    setShowChat(true);
+    setUnreadMessages(0);
+  };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1018,6 +1076,98 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
+      {/* Live Chat Widget */}
+      {!showChat && (
+        <button
+          onClick={handleChatOpen}
+          className="fixed bottom-6 right-6 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg transition-all hover:scale-110 duration-200"
+          aria-label="Open chat"
+        >
+          <div className="relative">
+            <MessageCircle className="w-6 h-6" />
+            {unreadMessages > 0 && (
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold">
+                {unreadMessages}
+              </span>
+            )}
+          </div>
+        </button>
+      )}
+
+      {/* Chat Window */}
+      {showChat && (
+        <div className="fixed bottom-6 right-6 z-40 w-96 h-96 bg-background border border-border rounded-lg shadow-2xl flex flex-col overflow-hidden">
+          {/* Chat Header */}
+          <div className="bg-accent text-accent-foreground p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              <div>
+                <h3 className="font-semibold text-sm">Due Diligence Support</h3>
+                <p className="text-xs opacity-90">We typically reply instantly</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowChat(false)}
+              className="hover:bg-accent/80 p-1 rounded transition-colors"
+              aria-label="Close chat"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Chat Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {chatMessages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
+                    msg.sender === 'user'
+                      ? 'bg-accent text-accent-foreground'
+                      : 'bg-muted text-foreground'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {isChatSubmitting && (
+              <div className="flex justify-start">
+                <div className="bg-muted text-foreground px-3 py-2 rounded-lg text-sm">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                    <div className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Chat Input */}
+          <form onSubmit={handleChatSubmit} className="border-t border-border p-3 flex gap-2">
+            <Input
+              type="text"
+              placeholder="Ask a question..."
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              disabled={isChatSubmitting}
+              className="bg-background text-foreground placeholder:text-foreground/50"
+            />
+            <button
+              type="submit"
+              disabled={isChatSubmitting || !chatInput.trim()}
+              className="bg-accent hover:bg-accent/90 text-accent-foreground p-2 rounded transition-colors disabled:opacity-50"
+              aria-label="Send message"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Exit-Intent Discount Modal */}
       <Dialog open={showExitIntent} onOpenChange={setShowExitIntent}>
         <DialogContent className="sm:max-w-md">
@@ -1069,6 +1219,98 @@ export default function Home() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Live Chat Widget */}
+      {!showChat && (
+        <button
+          onClick={handleChatOpen}
+          className="fixed bottom-6 right-6 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg transition-all hover:scale-110 duration-200"
+          aria-label="Open chat"
+        >
+          <div className="relative">
+            <MessageCircle className="w-6 h-6" />
+            {unreadMessages > 0 && (
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold">
+                {unreadMessages}
+              </span>
+            )}
+          </div>
+        </button>
+      )}
+
+      {/* Chat Window */}
+      {showChat && (
+        <div className="fixed bottom-6 right-6 z-40 w-96 h-96 bg-background border border-border rounded-lg shadow-2xl flex flex-col overflow-hidden">
+          {/* Chat Header */}
+          <div className="bg-accent text-accent-foreground p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              <div>
+                <h3 className="font-semibold text-sm">Due Diligence Support</h3>
+                <p className="text-xs opacity-90">We typically reply instantly</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowChat(false)}
+              className="hover:bg-accent/80 p-1 rounded transition-colors"
+              aria-label="Close chat"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Chat Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {chatMessages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
+                    msg.sender === 'user'
+                      ? 'bg-accent text-accent-foreground'
+                      : 'bg-muted text-foreground'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {isChatSubmitting && (
+              <div className="flex justify-start">
+                <div className="bg-muted text-foreground px-3 py-2 rounded-lg text-sm">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                    <div className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Chat Input */}
+          <form onSubmit={handleChatSubmit} className="border-t border-border p-3 flex gap-2">
+            <Input
+              type="text"
+              placeholder="Ask a question..."
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              disabled={isChatSubmitting}
+              className="bg-background text-foreground placeholder:text-foreground/50"
+            />
+            <button
+              type="submit"
+              disabled={isChatSubmitting || !chatInput.trim()}
+              className="bg-accent hover:bg-accent/90 text-accent-foreground p-2 rounded transition-colors disabled:opacity-50"
+              aria-label="Send message"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
